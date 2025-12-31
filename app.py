@@ -56,51 +56,15 @@ st.markdown("""
         padding-bottom: 2rem;
     }
     
-    /* Header styling */
-    h1 {
-        font-weight: 700 !important;
-        letter-spacing: -0.02em;
-        color: #1a1a2e !important;
-    }
-    
-    h2, h3 {
-        font-weight: 600 !important;
-        color: #374151 !important;
-        letter-spacing: -0.01em;
-    }
-    
-    /* Sidebar styling - clean white */
-    [data-testid="stSidebar"] {
-        background-color: #fafafa;
-        border-right: 1px solid #e5e7eb;
-    }
-    
-    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p,
-    [data-testid="stSidebar"] .stCheckbox label,
-    [data-testid="stSidebar"] label {
-        color: #374151 !important;
-    }
-    
-    [data-testid="stSidebar"] h2 {
-        color: #6b7280 !important;
-        font-size: 0.75rem !important;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        margin-top: 1.5rem;
-        font-weight: 600 !important;
-    }
-    
-    /* Metric cards */
+    /* Metric cards - use inherit to respect theme */
     div[data-testid="stMetricValue"] {
         font-size: 1.75rem;
         font-weight: 700;
-        color: #1a1a2e;
     }
     
     div[data-testid="stMetricLabel"] {
         font-size: 0.8rem;
         font-weight: 500;
-        color: #6b7280;
         text-transform: uppercase;
         letter-spacing: 0.03em;
     }
@@ -113,7 +77,6 @@ st.markdown("""
     /* Tabs styling */
     .stTabs [data-baseweb="tab-list"] {
         gap: 4px;
-        background-color: #f3f4f6;
         padding: 4px;
         border-radius: 10px;
     }
@@ -125,21 +88,15 @@ st.markdown("""
         border-radius: 8px;
         font-weight: 500;
         font-size: 0.875rem;
-        color: #6b7280;
         border: none;
     }
     
     .stTabs [aria-selected="true"] {
-        background-color: #ffffff !important;
-        color: #1a1a2e !important;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
     
     /* Buttons */
     .stButton > button {
-        background-color: #1a1a2e;
-        color: white;
-        border: none;
         border-radius: 8px;
         padding: 0.5rem 1.25rem;
         font-weight: 500;
@@ -147,15 +104,8 @@ st.markdown("""
         transition: all 0.15s ease;
     }
     
-    .stButton > button:hover {
-        background-color: #374151;
-    }
-    
     /* Download buttons */
     .stDownloadButton > button {
-        background-color: #374151;
-        color: white;
-        border: none;
         border-radius: 8px;
         font-weight: 500;
     }
@@ -166,8 +116,6 @@ st.markdown("""
     }
     
     [data-testid="stFileUploader"] > div:first-child {
-        background: #ffffff;
-        border: 1px dashed #d1d5db;
         border-radius: 10px;
         padding: 1rem;
     }
@@ -175,8 +123,6 @@ st.markdown("""
     /* Expander styling */
     .streamlit-expanderHeader {
         font-weight: 600;
-        color: #374151;
-        background-color: #f9fafb;
         border-radius: 8px;
     }
     
@@ -184,7 +130,6 @@ st.markdown("""
     .stDataFrame {
         border-radius: 10px;
         overflow: hidden;
-        border: 1px solid #e5e7eb;
     }
     
     /* Success/Error/Warning/Info messages */
@@ -196,21 +141,12 @@ st.markdown("""
     /* Number inputs */
     input[type="number"] {
         border-radius: 8px !important;
-        border: 1px solid #d1d5db !important;
-        background: #ffffff !important;
     }
     
-    /* Dividers */
-    hr {
-        border-color: #e5e7eb;
-    }
-    
-    /* Chart containers */
+    /* Chart containers - transparent to inherit theme background */
     [data-testid="stPlotlyChart"] {
-        background: #ffffff;
         border-radius: 12px;
         padding: 0.75rem;
-        border: 1px solid #f3f4f6;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -641,12 +577,12 @@ def create_rate_of_change_chart(glucose_df: pd.DataFrame, smoothing: int = 5) ->
         margin=dict(l=50, r=30, t=50, b=30),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        font=dict(family="Inter, sans-serif", size=12, color="#374151"),
-        hoverlabel=dict(bgcolor="white", font_size=12, bordercolor="#e5e7eb")
+        font=dict(family="Inter, sans-serif", size=12),
+        hoverlabel=dict(font_size=12)
     )
     
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(0,0,0,0.04)')
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(0,0,0,0.04)')
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.15)')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.15)')
     
     return fig
 
@@ -689,12 +625,12 @@ def create_lag_correlation_chart(lag_data: dict) -> go.Figure:
         margin=dict(l=50, r=30, t=60, b=50),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        font=dict(family="Inter, sans-serif", color="#374151"),
-        hoverlabel=dict(bgcolor="white", bordercolor="#e5e7eb")
+        font=dict(family="Inter, sans-serif"),
+        hoverlabel=dict(bordercolor="rgba(128,128,128,0.3)")
     )
     
-    fig.update_xaxes(showgrid=True, gridcolor='rgba(0,0,0,0.04)')
-    fig.update_yaxes(showgrid=True, gridcolor='rgba(0,0,0,0.04)', range=[-1, 1])
+    fig.update_xaxes(showgrid=True, gridcolor='rgba(128,128,128,0.15)')
+    fig.update_yaxes(showgrid=True, gridcolor='rgba(128,128,128,0.15)', range=[-1, 1])
     
     return fig
 
@@ -773,12 +709,11 @@ def create_rolling_variability_chart(glucose_df: pd.DataFrame, window_hours: int
         margin=dict(l=50, r=30, t=50, b=30),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        font=dict(family="Inter, sans-serif", color="#374151"),
-        hoverlabel=dict(bgcolor="white", bordercolor="#e5e7eb")
+        font=dict(family="Inter, sans-serif")
     )
     
-    fig.update_xaxes(showgrid=True, gridcolor='rgba(0,0,0,0.04)')
-    fig.update_yaxes(showgrid=True, gridcolor='rgba(0,0,0,0.04)')
+    fig.update_xaxes(showgrid=True, gridcolor='rgba(128,128,128,0.15)')
+    fig.update_yaxes(showgrid=True, gridcolor='rgba(128,128,128,0.15)')
     
     return fig
 
@@ -883,12 +818,12 @@ def create_trends_chart(trends_data: dict) -> go.Figure:
         margin=dict(l=50, r=80, t=50, b=30),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        font=dict(family="Inter, sans-serif", color="#374151"),
+        font=dict(family="Inter, sans-serif"),
         bargap=0.3
     )
     
     fig.update_xaxes(showgrid=False)
-    fig.update_yaxes(showgrid=True, gridcolor='rgba(0,0,0,0.04)')
+    fig.update_yaxes(showgrid=True, gridcolor='rgba(128,128,128,0.15)')
     
     return fig
 
@@ -1003,12 +938,10 @@ def create_time_series_plot(glucose_df: pd.DataFrame = None,
         margin=dict(l=50, r=30, t=50, b=30),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        font=dict(family="Inter, sans-serif", size=12, color="#374151"),
+        font=dict(family="Inter, sans-serif", size=12),
         hoverlabel=dict(
-            bgcolor="white",
             font_size=13,
-            font_family="Inter, sans-serif",
-            bordercolor="#e5e7eb"
+            font_family="Inter, sans-serif"
         )
     )
     
@@ -1016,14 +949,14 @@ def create_time_series_plot(glucose_df: pd.DataFrame = None,
     fig.update_xaxes(
         showgrid=True, 
         gridwidth=1, 
-        gridcolor='rgba(0,0,0,0.04)',
+        gridcolor='rgba(128,128,128,0.15)',
         tickformat='%b %d',
         tickfont=dict(size=11)
     )
     fig.update_yaxes(
         showgrid=True, 
         gridwidth=1, 
-        gridcolor='rgba(0,0,0,0.04)',
+        gridcolor='rgba(128,128,128,0.15)',
         tickfont=dict(size=11)
     )
     
@@ -1118,7 +1051,7 @@ def create_overlay_chart(glucose_df: pd.DataFrame = None,
         title_font=dict(size=12),
         showgrid=True,
         gridwidth=1,
-        gridcolor='rgba(0,0,0,0.04)'
+        gridcolor='rgba(128,128,128,0.15)'
     )
     fig.update_yaxes(
         title_text="Ketones (mmol/L)", 
@@ -1132,7 +1065,7 @@ def create_overlay_chart(glucose_df: pd.DataFrame = None,
     
     # Add range slider for zooming
     fig.update_xaxes(
-        rangeslider=dict(visible=True, thickness=0.04, bgcolor='#f9fafb'),
+        rangeslider=dict(visible=True, thickness=0.04),
         rangeselector=dict(
             buttons=list([
                 dict(count=6, label="6h", step="hour", stepmode="backward"),
@@ -1141,15 +1074,12 @@ def create_overlay_chart(glucose_df: pd.DataFrame = None,
                 dict(count=7, label="1w", step="day", stepmode="backward"),
                 dict(step="all", label="All")
             ]),
-            bgcolor='#f3f4f6',
-            activecolor='#e5e7eb',
-            font=dict(color='#374151', size=11),
-            bordercolor='#e5e7eb',
+            font=dict(size=11),
             borderwidth=1
         ),
         showgrid=True,
         gridwidth=1,
-        gridcolor='rgba(0,0,0,0.04)',
+        gridcolor='rgba(128,128,128,0.15)',
         tickformat='%b %d, %H:%M',
         tickfont=dict(size=10)
     )
@@ -1163,20 +1093,18 @@ def create_overlay_chart(glucose_df: pd.DataFrame = None,
             y=1.02, 
             xanchor="center", 
             x=0.5,
-            font=dict(size=12, color='#374151'),
-            bgcolor='rgba(255,255,255,0)',
+            font=dict(size=12),
+            bgcolor='rgba(0,0,0,0)',
             itemsizing='constant'
         ),
         hovermode='x unified',
         margin=dict(l=55, r=55, t=50, b=30),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        font=dict(family="Inter, sans-serif", color='#374151'),
+        font=dict(family="Inter, sans-serif"),
         hoverlabel=dict(
-            bgcolor="white",
             font_size=13,
-            font_family="Inter, sans-serif",
-            bordercolor="#e5e7eb"
+            font_family="Inter, sans-serif"
         )
     )
     
@@ -1235,7 +1163,7 @@ def create_daily_chart(daily_metrics: list) -> go.Figure:
     )
     
     fig.update_xaxes(showgrid=False)
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(0,0,0,0.05)')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.15)')
     
     return fig
 
@@ -1388,8 +1316,8 @@ def create_distribution_plot(glucose_df: pd.DataFrame = None,
         font=dict(family="Inter, sans-serif")
     )
     
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(0,0,0,0.05)')
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(0,0,0,0.05)')
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.15)')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.15)')
     
     return fig
 
@@ -1503,8 +1431,8 @@ def create_scatter_glucose_ketone(glucose_df: pd.DataFrame,
         font=dict(family="Inter, sans-serif")
     )
     
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(0,0,0,0.05)')
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(0,0,0,0.05)')
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.15)')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.15)')
     
     return fig
 
