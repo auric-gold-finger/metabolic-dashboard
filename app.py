@@ -1584,6 +1584,10 @@ def main():
         # Key metrics row
         if glucose_metrics:
             st.subheader("Glucose Overview")
+            st.markdown("""
+            **What to look for:** Mean glucose ideally 80-120 mg/dL. CV (coefficient of variation) under 36% indicates stable glucose. 
+            GMI estimates your A1C from CGM data. Time in Range (70-180) should be >70% for good control.
+            """)
             col1, col2, col3, col4, col5 = st.columns(5)
             
             with col1:
@@ -1604,6 +1608,10 @@ def main():
         
         if ketone_metrics:
             st.subheader("Ketone Overview")
+            st.markdown("""
+            **What to look for:** On a ketogenic diet, aim for 0.5-3.0 mmol/L (nutritional ketosis). 
+            Higher isn't always better — consistency matters more than peaks. Mean ketones of 0.5-1.5 mmol/L is typical for well-adapted individuals.
+            """)
             col1, col2, col3, col4, col5 = st.columns(5)
             
             with col1:
@@ -1622,12 +1630,20 @@ def main():
         # Overlay chart (glucose + ketones on same timeline with zoom)
         if glucose_df is not None and ketone_df is not None:
             st.subheader("Glucose & Ketones Overlay")
-            st.caption("Use the range slider below the chart or the time buttons to zoom in on specific periods")
+            st.markdown("""
+            **What to look for:** When glucose drops, ketones should rise (and vice versa) — this shows your body switching fuel sources. 
+            Look for the inverse relationship: low glucose periods should align with elevated ketones. 
+            Use the time buttons (6h, 1d, 3d, 1w) or drag the slider below to zoom into specific meals or fasting periods.
+            """)
             overlay_fig = create_overlay_chart(glucose_df, ketone_df, show_ranges, smoothing_window, show_raw_data)
             st.plotly_chart(overlay_fig, use_container_width=True)
         
         # Time series plot (separate panels)
         st.subheader("Time Series (Separate Panels)")
+        st.markdown("""
+        **What to look for:** The shaded zones show target ranges. For glucose, green (70-180) is the standard target zone. 
+        Red areas indicate time spent too high or too low. Smoother lines with fewer sharp spikes indicate better metabolic control.
+        """)
         fig = create_time_series_plot(glucose_df, ketone_df, show_ranges, smoothing_window, show_raw_data)
         st.plotly_chart(fig, use_container_width=True)
         
@@ -1637,12 +1653,14 @@ def main():
         with col1:
             if glucose_metrics:
                 st.subheader("Glucose Time in Range")
+                st.markdown("**Takeaway:** The green slice shows time in the healthy 70-180 mg/dL range. Aim for >70% green.")
                 fig = create_tir_donut(glucose_metrics, 'glucose')
                 st.plotly_chart(fig, use_container_width=True)
         
         with col2:
             if ketone_metrics:
                 st.subheader("Ketone Zones")
+                st.markdown("**Takeaway:** Light, moderate, and deep ketosis zones show fat-burning states. Trace/absent means glucose-burning mode.")
                 fig = create_tir_donut(ketone_metrics, 'ketone')
                 st.plotly_chart(fig, use_container_width=True)
     
@@ -1651,6 +1669,9 @@ def main():
     # ==========================================================================
     with tab2:
         st.subheader("Advanced Metabolic Analysis")
+        st.markdown("""
+        These analyses dig deeper into your metabolic patterns to help you understand how your body responds to food, fasting, and daily rhythms.
+        """)
         
         # Metabolic Flexibility Score
         overlap_data = analyze_overlap_periods(glucose_df, ketone_df) if glucose_df is not None and ketone_df is not None else None
@@ -1658,6 +1679,13 @@ def main():
         
         if flex_score['total'] is not None:
             st.markdown("### Metabolic Flexibility Score")
+            st.markdown("""
+            **What this means:** This score measures how well your body can switch between burning glucose and fat for fuel. 
+            A higher score indicates better metabolic health. 
+            - **Glucose Stability** (40 pts): Low variability and time in range
+            - **Ketone Production** (30 pts): Ability to produce ketones consistently  
+            - **Flexibility** (30 pts): The inverse relationship between glucose and ketones (when one goes down, the other goes up)
+            """)
             
             score_cols = st.columns(4)
             with score_cols[0]:
@@ -1681,7 +1709,14 @@ def main():
         # Rate of Change Analysis
         if glucose_df is not None:
             st.markdown("### Rate of Change")
-            st.caption("How fast glucose rises and falls — rapid changes indicate poor glycemic control")
+            st.markdown("""
+            **What this shows:** How fast your glucose rises and falls, measured in mg/dL per hour. 
+            - **Green bars** = glucose rising (after eating)
+            - **Red bars** = glucose falling (insulin response or fasting)
+            - The dotted lines at ±30 mg/dL/hr mark rapid changes that may indicate problematic spikes or crashes
+            
+            **Takeaway:** Smaller, more gradual changes indicate better glycemic control. Large swings suggest meals that spike your blood sugar.
+            """)
             
             roc_fig = create_rate_of_change_chart(glucose_df, smoothing_window)
             st.plotly_chart(roc_fig, use_container_width=True)
@@ -1691,7 +1726,13 @@ def main():
         # Lag Correlation (requires both glucose and ketones)
         if glucose_df is not None and ketone_df is not None:
             st.markdown("### Glucose-Ketone Lag Analysis")
-            st.caption("How ketone levels respond to glucose changes over time")
+            st.markdown("""
+            **What this shows:** This measures how your ketone levels correlate with glucose at different time offsets.
+            A negative correlation means when glucose is high, ketones are low (and vice versa) — this is the healthy, expected pattern.
+            
+            **Takeaway:** The "optimal lag" tells you how long it takes your body to shift into ketone production after glucose drops. 
+            Typically 2-4 hours. A stronger negative correlation (closer to -1) indicates better metabolic flexibility.
+            """)
             
             lag_data = calculate_lag_correlation(glucose_df, ketone_df)
             
@@ -1717,7 +1758,13 @@ def main():
         # Rolling Variability
         if glucose_df is not None:
             st.markdown("### Rolling Variability")
-            st.caption("Track glucose stability over time — are you improving?")
+            st.markdown("""
+            **What this shows:** The top chart shows your 24-hour rolling average glucose. The bottom shows your coefficient of variation (CV) over time.
+            
+            **Takeaway:** CV under 36% is the clinical target for good glucose control (shown by the green dotted line). 
+            If your CV is trending downward over time, your glucose stability is improving. 
+            Periods of high CV often correspond to dietary changes, stress, or poor sleep.
+            """)
             
             var_fig = create_rolling_variability_chart(glucose_df, 24)
             st.plotly_chart(var_fig, use_container_width=True)
@@ -1728,7 +1775,13 @@ def main():
         trends = calculate_weekly_trends(glucose_df, ketone_df)
         if trends['glucose'] or trends['ketones']:
             st.markdown("### Weekly Trends")
-            st.caption("Daily averages with trend lines showing improvement direction")
+            st.markdown("""
+            **What this shows:** Each bar represents your daily average. The trend line shows whether you're improving over time.
+            
+            **Takeaway:** For glucose, a downward-sloping trend line means your average blood sugar is decreasing (good!). 
+            For ketones, an upward trend indicates you're spending more time in ketosis. 
+            Focus on the direction of the trend, not day-to-day fluctuations.
+            """)
             
             trends_fig = create_trends_chart(trends)
             if trends_fig:
@@ -1754,6 +1807,13 @@ def main():
         # Glucose Spike Analysis
         if glucose_df is not None:
             st.markdown("### Glucose Spike Analysis")
+            st.markdown("""
+            **What this shows:** Detects when your glucose rose rapidly (≥30 mg/dL), how high it went, and how long it took to recover.
+            
+            **Takeaway:** Frequent spikes suggest foods or meals that your body struggles to handle. 
+            Note the times — are spikes happening after specific meals? 
+            Fast recovery times (<60 min) indicate good insulin sensitivity. Slow recovery (>90 min) may suggest insulin resistance.
+            """)
             spikes = analyze_glucose_spikes(glucose_df)
             
             if spikes:
@@ -1791,6 +1851,15 @@ def main():
         overnight = analyze_overnight(glucose_df, ketone_df)
         if overnight:
             st.markdown("### Overnight Analysis (12am - 6am)")
+            st.markdown("""
+            **What this shows:** Your glucose patterns during sleep, when you're not eating. This reveals your baseline metabolic state.
+            
+            **Takeaway:** 
+            - **Mean** should be 70-100 mg/dL during sleep
+            - **CV** under 36% indicates stable overnight glucose
+            - **Dawn Effect** is the natural rise in glucose before waking (liver releasing glucose). >10 mg/dL rise may indicate insulin resistance.
+            - **Night Ketones** tend to be highest overnight since you're fasting while sleeping
+            """)
             
             night_cols = st.columns(5)
             with night_cols[0]:
@@ -1813,6 +1882,13 @@ def main():
         
         # Fasting Windows
         st.markdown("### Detected Fasting Windows")
+        st.markdown("""
+        **What this shows:** Periods where your body was clearly in a fasted, fat-burning state — low glucose AND elevated ketones simultaneously.
+        
+        **Takeaway:** These windows show when you were truly fasting (not just not eating, but metabolically fasted). 
+        More total fasting hours generally means more time burning fat for fuel. 
+        If you're doing intermittent fasting, check if your fasting windows are actually producing ketones.
+        """)
         fasting_windows = detect_fasting_windows(glucose_df, ketone_df)
         
         if fasting_windows:
@@ -1834,11 +1910,22 @@ def main():
     # Tab 3: Detailed Metrics
     # ==========================================================================
     with tab3:
+        st.markdown("""
+        **Reference Guide:** This tab provides the complete statistical breakdown of your data. 
+        Use it to track specific numbers over time or share with your healthcare provider.
+        """)
+        
         col1, col2 = st.columns(2)
         
         with col1:
             if glucose_metrics:
                 st.subheader("Glucose Metrics")
+                st.markdown("""
+                **Key targets:**
+                - Mean: 80-120 mg/dL (non-diabetic), <154 mg/dL (diabetic)
+                - CV: <36% (stable), <33% (excellent)
+                - GMI: <7% (good), <6.5% (excellent)
+                """)
                 
                 st.markdown("**Basic Statistics**")
                 stats_df = pd.DataFrame({
@@ -1969,6 +2056,7 @@ def main():
                                  f"{overlap['mean_ketones_when_glucose_low']:.2f} mmol/L")
                 
                 st.markdown("**Metabolic State Distribution**")
+                st.markdown("*This shows what percentage of time you spent in each metabolic state based on glucose and ketone levels.*")
                 states = overlap.get('metabolic_states_pct', {})
                 states_df = pd.DataFrame({
                     'State': [k.replace('_', ' ').title() for k in states.keys()],
@@ -1977,6 +2065,11 @@ def main():
                 st.dataframe(states_df, hide_index=True, use_container_width=True)
                 
                 # Scatter plot
+                st.markdown("**Glucose vs Ketones Scatter Plot**")
+                st.markdown("""
+                *Each dot is a moment in time. The bottom-right quadrant (low glucose, high ketones) represents the ideal fasted/ketogenic state. 
+                Top-left (high glucose, low ketones) is the fed/glucose-burning state.*
+                """)
                 fig = create_scatter_glucose_ketone(glucose_df, ketone_df)
                 if fig:
                     st.plotly_chart(fig, use_container_width=True)
@@ -1985,6 +2078,7 @@ def main():
         
         # Distributions
         st.subheader("Distributions")
+        st.markdown("*Histograms showing how often each glucose and ketone level occurs. A tighter, narrower distribution indicates more stable values.*")
         fig = create_distribution_plot(glucose_df, ketone_df)
         st.plotly_chart(fig, use_container_width=True)
     
@@ -1993,6 +2087,12 @@ def main():
     # ==========================================================================
     with tab4:
         st.subheader("Daily Breakdown")
+        st.markdown("""
+        **What this shows:** Your glucose and ketone averages broken down by day. 
+        
+        **How to use it:** Look for patterns — are weekends different from weekdays? 
+        Which days had the best control? Use this to identify what you did differently on good days vs. bad days.
+        """)
         
         if daily_metrics:
             # Daily chart
@@ -2001,6 +2101,7 @@ def main():
             
             # Daily table
             st.subheader("Daily Data Table")
+            st.markdown("*Tip: Look for days with low glucose mean AND high ketone mean — those are your best metabolic days.*")
             
             daily_data = []
             for dm in daily_metrics:
@@ -2035,6 +2136,16 @@ def main():
     # ==========================================================================
     with tab5:
         st.subheader("Hourly Patterns")
+        st.markdown("""
+        **What this shows:** Your average glucose and ketone levels at each hour of the day, aggregated across all days in your data.
+        
+        **How to use it:** 
+        - **Heatmap:** Darker colors = higher values. Look for consistent patterns (e.g., always high after lunch).
+        - **Peak/Nadir hours:** When is your glucose highest and lowest? This reveals your body's daily rhythm.
+        - **Dawn phenomenon:** The natural rise in glucose before waking. >10 mg/dL rise is considered elevated.
+        
+        **Takeaway:** Use this to time your meals, fasting windows, and activities. If glucose peaks at 1pm, consider what you're eating for lunch.
+        """)
         
         # Heatmap
         fig = create_hourly_heatmap(glucose_df, ketone_df)
@@ -2092,6 +2203,13 @@ def main():
     # ==========================================================================
     with tab6:
         st.subheader("Full Report")
+        st.markdown("""
+        **What this is:** A comprehensive text summary of all your metrics, ready to download and share with your healthcare provider or keep for your records.
+        
+        **Formats available:**
+        - **TXT:** Human-readable report with all key findings
+        - **JSON:** Machine-readable data for importing into other tools or tracking over time
+        """)
         
         # Generate analysis
         analysis = type('Analysis', (), {
