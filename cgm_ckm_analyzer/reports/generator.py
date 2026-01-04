@@ -7,11 +7,11 @@ Generates analysis reports with evidence tier annotations.
 from typing import Optional, Dict, Any, List
 from datetime import datetime
 
-from metabolic_dashboard.config import AnalysisConfig
-from metabolic_dashboard.metrics.glucose_metrics import GlucoseMetrics
-from metabolic_dashboard.metrics.ketone_metrics import KetoneMetrics
-from metabolic_dashboard.metrics.daily_metrics import DailyMetrics
-from metabolic_dashboard.utils.colors import EVIDENCE_TIER_LABELS
+from cgm_ckm_analyzer.config import AnalysisConfig
+from cgm_ckm_analyzer.metrics.glucose_metrics import GlucoseMetrics
+from cgm_ckm_analyzer.metrics.ketone_metrics import KetoneMetrics
+from cgm_ckm_analyzer.metrics.daily_metrics import DailyMetrics
+from cgm_ckm_analyzer.utils.colors import EVIDENCE_TIER_LABELS
 
 
 class ReportGenerator:

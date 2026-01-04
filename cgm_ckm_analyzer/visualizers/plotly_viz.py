@@ -11,9 +11,9 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from typing import Optional, Dict, Any, List, Tuple
 
-from metabolic_dashboard.config import AnalysisConfig
-from metabolic_dashboard.utils.smoothing import rolling_smooth
-from metabolic_dashboard.utils.colors import (
+from cgm_ckm_analyzer.config import AnalysisConfig
+from cgm_ckm_analyzer.utils.smoothing import rolling_smooth
+from cgm_ckm_analyzer.utils.colors import (
     get_glucose_color,
     get_ketone_color,
     GLUCOSE_COLORSCALE,

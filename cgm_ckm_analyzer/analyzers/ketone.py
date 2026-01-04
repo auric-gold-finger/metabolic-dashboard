@@ -10,9 +10,9 @@ import numpy as np
 import pandas as pd
 from typing import Optional, Dict, Any
 
-from metabolic_dashboard.config import AnalysisConfig, KetoneThresholds
-from metabolic_dashboard.metrics.ketone_metrics import KetoneMetrics
-from metabolic_dashboard.utils.statistics import calculate_data_coverage
+from cgm_ckm_analyzer.config import AnalysisConfig, KetoneThresholds
+from cgm_ckm_analyzer.metrics.ketone_metrics import KetoneMetrics
+from cgm_ckm_analyzer.utils.statistics import calculate_data_coverage
 
 
 class KetoneAnalyzer:

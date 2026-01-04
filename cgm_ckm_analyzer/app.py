@@ -1,5 +1,5 @@
 """
-Metabolic Analysis Streamlit App (Refactored)
+CGM/CKM Analyzer Streamlit App (Refactored)
 
 Interactive dashboard for analyzing CGM glucose and ketone monitor data.
 Organized by evidence tier: Consensus → Optimization → Experimental.
@@ -17,11 +17,11 @@ from pathlib import Path
 # Add package to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from metabolic_dashboard.config import AnalysisConfig, load_config
-from metabolic_dashboard.loaders import DexcomLoader, SibioLoader
-from metabolic_dashboard.analyzers import GlucoseAnalyzer, KetoneAnalyzer, CombinedAnalyzer
-from metabolic_dashboard.visualizers import PlotlyVisualizer, MatplotlibVisualizer
-from metabolic_dashboard.reports import ReportGenerator
+from cgm_ckm_analyzer.config import AnalysisConfig, load_config
+from cgm_ckm_analyzer.loaders import DexcomLoader, SibioLoader
+from cgm_ckm_analyzer.analyzers import GlucoseAnalyzer, KetoneAnalyzer, CombinedAnalyzer
+from cgm_ckm_analyzer.visualizers import PlotlyVisualizer, MatplotlibVisualizer
+from cgm_ckm_analyzer.reports import ReportGenerator
 
 
 # =============================================================================
@@ -29,7 +29,7 @@ from metabolic_dashboard.reports import ReportGenerator
 # =============================================================================
 
 st.set_page_config(
-    page_title="Metabolic Analysis",
+    page_title="CGM/CKM Analyzer",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -147,7 +147,7 @@ init_session_state()
 def render_sidebar():
     """Render sidebar with file uploads and configuration."""
     with st.sidebar:
-        st.title("📊 Metabolic Analysis")
+        st.title("📊 CGM/CKM Analyzer")
         
         # File uploads
         st.subheader("Data Upload")

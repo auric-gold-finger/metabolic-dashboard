@@ -16,7 +16,7 @@ from pathlib import Path
 
 def main():
     # Path to the app
-    app_path = Path(__file__).parent / "metabolic_dashboard" / "app.py"
+    app_path = Path(__file__).parent / "cgm_ckm_analyzer" / "app.py"
     
     if not app_path.exists():
         print(f"Error: App not found at {app_path}")

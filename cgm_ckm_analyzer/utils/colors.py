@@ -7,7 +7,7 @@ Includes both the original cgm_plot.py matplotlib palette and Plotly-compatible 
 
 import numpy as np
 from typing import Tuple, List, Optional
-from metabolic_dashboard.config import GlucoseThresholds, KetoneThresholds
+from cgm_ckm_analyzer.config import GlucoseThresholds, KetoneThresholds
 
 
 # =============================================================================

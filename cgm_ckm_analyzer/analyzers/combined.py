@@ -15,11 +15,11 @@ import pandas as pd
 from typing import Optional, List, Dict, Any, Tuple
 from dataclasses import dataclass
 
-from metabolic_dashboard.config import AnalysisConfig
-from metabolic_dashboard.analyzers.glucose import GlucoseAnalyzer
-from metabolic_dashboard.analyzers.ketone import KetoneAnalyzer
-from metabolic_dashboard.metrics.daily_metrics import DailyMetrics
-from metabolic_dashboard.utils.statistics import linear_regression
+from cgm_ckm_analyzer.config import AnalysisConfig
+from cgm_ckm_analyzer.analyzers.glucose import GlucoseAnalyzer
+from cgm_ckm_analyzer.analyzers.ketone import KetoneAnalyzer
+from cgm_ckm_analyzer.metrics.daily_metrics import DailyMetrics
+from cgm_ckm_analyzer.utils.statistics import linear_regression
 
 
 @dataclass

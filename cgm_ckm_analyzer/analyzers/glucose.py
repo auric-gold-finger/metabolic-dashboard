@@ -9,9 +9,9 @@ import numpy as np
 import pandas as pd
 from typing import Optional, List, Dict, Any, Tuple
 
-from metabolic_dashboard.config import AnalysisConfig, GlucoseThresholds
-from metabolic_dashboard.metrics.glucose_metrics import GlucoseMetrics
-from metabolic_dashboard.utils.statistics import (
+from cgm_ckm_analyzer.config import AnalysisConfig, GlucoseThresholds
+from cgm_ckm_analyzer.metrics.glucose_metrics import GlucoseMetrics
+from cgm_ckm_analyzer.utils.statistics import (
     calculate_cv,
     calculate_quantiles,
     calculate_auc_above_threshold,

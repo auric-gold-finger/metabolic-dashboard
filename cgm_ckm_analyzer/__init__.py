@@ -8,7 +8,7 @@ This package provides modular components for:
 - Generating reports organized by evidence tier
 """
 
-from metabolic_dashboard.config import AnalysisConfig, load_config
+from cgm_ckm_analyzer.config import AnalysisConfig, load_config
 
 __version__ = "2.0.0"
 __all__ = ["AnalysisConfig", "load_config"]

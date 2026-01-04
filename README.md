@@ -1,186 +1,125 @@
-# Metabolic Analysis Module
+# CGM/CKM Analyzer
 
-Python module and Streamlit dashboard for analyzing continuous glucose monitor (CGM) and continuous ketone monitor (CKM) data.
+A modular Python package and Streamlit dashboard for analyzing continuous glucose monitor (CGM) and ketone monitor data.
 
-## Quick Start - Streamlit App
+## Features
+
+- **Evidence-Based Metrics**: Organized by evidence tier (Consensus → Optimization → Experimental)
+- **Dual Visualization**: Interactive Plotly charts + publication-quality Matplotlib plots
+- **Modular Architecture**: Reusable analyzers, loaders, and visualizers
+
+## Quick Start
 
 ```bash
 # Install dependencies
 pip install -r requirements.txt
 
-# Run the app
-streamlit run app.py
+# Run the dashboard
+streamlit run cgm_ckm_analyzer/app.py
+
+# Or use the helper script
+python run_dashboard.py
 ```
 
-Then upload your Dexcom and/or Sibio CSV files in the sidebar.
-
-![Dashboard Screenshot](screenshot.png)
+Upload your Dexcom CGM and/or Sibio ketone CSV files in the sidebar.
 
 ## Supported Data Sources
 
-- **Dexcom G7**: CSV export from Dexcom Clarity or app
+- **Dexcom G7/G6**: CSV export from Dexcom Clarity
 - **Sibio**: CSV export from Sibio continuous ketone monitor
 
-## Installation
+## Project Structure
 
-```bash
-# Requires pandas and numpy
-pip install pandas numpy
+```
+cgm_ckm_analyzer/
+├── app.py                 # Streamlit dashboard
+├── config.py              # Configuration dataclasses
+├── config.yaml            # Default thresholds (editable)
+├── analyzers/
+│   ├── glucose.py         # CGM metrics (GMI, TIR, CV, MAGE, etc.)
+│   ├── ketone.py          # Ketone zone analysis
+│   └── combined.py        # Joint glucose+ketone analysis
+├── metrics/
+│   ├── glucose_metrics.py # Glucose metrics dataclass
+│   ├── ketone_metrics.py  # Ketone metrics dataclass
+│   └── daily_metrics.py   # Daily aggregation dataclass
+├── loaders/
+│   ├── dexcom.py          # Dexcom CSV parser
+│   └── sibio.py           # Sibio CSV parser
+├── visualizers/
+│   ├── plotly_viz.py      # Interactive charts
+│   └── matplotlib_viz.py  # Publication-quality plots
+├── utils/
+│   ├── smoothing.py       # Savitzky-Golay, rolling average
+│   ├── statistics.py      # CV, quantiles, AUC calculations
+│   └── colors.py          # Color palettes, evidence badges
+└── reports/
+    └── generator.py       # Text report generation
 ```
 
-## Usage
+## Evidence Tiers
 
-### Command Line
+Metrics are organized by strength of clinical evidence:
 
-```bash
-# Analyze both glucose and ketone data
-python metabolic_analysis.py --dexcom dexcom_export.csv --sibio sibio_export.csv
+| Tier | Description | Examples |
+|------|-------------|----------|
+| 🟢 **Consensus** | ADA/EASD/International Guidelines | TIR, GMI, CV, LBGI/HBGI |
+| 🟡 **Optimization** | Metabolic health literature | Tight range (70-140), MAGE, ketone zones |
+| 🔴 **Experimental** | Novel/unvalidated analyses | Metabolic Flexibility Score, lag correlation |
 
-# JSON output
-python metabolic_analysis.py --dexcom dexcom_export.csv --sibio sibio_export.csv --output json
-
-# Save to file
-python metabolic_analysis.py --dexcom dexcom_export.csv --output text --save report.txt
-
-# Analyze only glucose
-python metabolic_analysis.py --dexcom dexcom_export.csv
-
-# Analyze only ketones
-python metabolic_analysis.py --sibio sibio_export.csv
-```
-
-### Python API
+## Python API
 
 ```python
-from metabolic_analysis import (
-    run_analysis,
-    generate_report,
-    load_dexcom_data,
-    load_sibio_data,
-    analyze_glucose,
-    analyze_ketones,
-)
+from cgm_ckm_analyzer.config import AnalysisConfig, load_config
+from cgm_ckm_analyzer.analyzers import GlucoseAnalyzer, KetoneAnalyzer
+from cgm_ckm_analyzer.visualizers import MatplotlibVisualizer
+import pandas as pd
 
-# Full analysis
-analysis = run_analysis(
-    dexcom_path='dexcom_export.csv',
-    sibio_path='sibio_export.csv'
-)
+# Load your data
+glucose_df = pd.read_csv('dexcom_export.csv')
+# ... preprocess to have 'timestamp' and 'glucose_mg_dl' columns
 
-# Access results
-print(analysis.glucose_metrics.mean)        # 97.3
-print(analysis.glucose_metrics.gmi)         # 5.64
-print(analysis.ketone_metrics.time_above_1) # 7.5
+# Analyze
+config = load_config()  # or AnalysisConfig() for defaults
+analyzer = GlucoseAnalyzer(glucose_df, config)
+metrics = analyzer.metrics
 
-# Generate text report
-report = generate_report(analysis)
-print(report)
+print(f"GMI: {metrics.gmi:.1f}%")
+print(f"TIR: {metrics.time_in_range:.1f}%")
+print(f"CV: {metrics.cv:.1f}%")
 
-# Get as dict for JSON serialization
-glucose_dict = analysis.glucose_metrics.to_dict()
-ketone_dict = analysis.ketone_metrics.to_dict()
+# Visualize
+viz = MatplotlibVisualizer(config)
+fig = viz.create_daily_overlay(glucose_df)
+fig.savefig('cgm_overlay.png', dpi=300)
 ```
 
-## Metrics Computed
+## Configuration
 
-### Glucose Metrics
+Edit `cgm_ckm_analyzer/config.yaml` to customize thresholds:
 
-| Metric | Description |
-|--------|-------------|
-| Mean, Median, SD | Basic descriptive statistics |
-| CV (%) | Coefficient of variation - key variability metric |
-| GMI | Glucose Management Indicator (estimated A1C) |
-| Time in Range | Standard ranges: <54, 54-69, 70-180, 181-250, >250 |
-| Tight Range | 70-140 mg/dL (metabolic optimization target) |
-| Optimal | 70-110 mg/dL (longevity optimization target) |
-| MAGE | Mean Amplitude of Glycemic Excursions |
-| J-Index | Combined mean + variability metric |
-| LBGI/HBGI | Low/High Blood Glucose Risk Index |
+```yaml
+glucose:
+  target_high: 180      # Standard TIR upper (consensus)
+  tight_high: 140       # Tighter target (optimization)
+  optimal_high: 110     # Longevity target (optimization)
 
-### Ketone Metrics
-
-| Metric | Description |
-|--------|-------------|
-| Mean, Median, SD, Range | Basic descriptive statistics |
-| Time in Zones | Absent (<0.2), Trace (0.2-0.5), Light (0.5-1.0), Moderate (1-3), Deep (>3) |
-| Peak | Maximum ketone reading with timestamp |
-| Time ≥1.0 | Therapeutic ketosis threshold |
-| Time ≥2.0 | Deep ketosis threshold |
-
-### Combined Analysis (when both data sources available)
-
-- Metabolic state classification during overlapping periods
-- Glucose-ketone correlation
-- Mean glucose when ketones elevated
-- Mean ketones when glucose low
-
-## Metabolic State Classifications
-
-| State | Definition |
-|-------|------------|
-| Optimal Flexibility | Glucose <100 + Ketones >0.5 |
-| Fasted/Keto | Glucose <100 + Ketones 0.5-3.0 |
-| Fed State | Glucose >120 + Ketones <0.3 |
-| Stress Response | Glucose >140 + Ketones >1.0 |
-| Moderate Mixed | All other combinations |
-
-## Data Format Requirements
-
-### Dexcom CSV
-
-Standard Clarity export format with columns:
-- `Timestamp (YYYY-MM-DDThh:mm:ss)`
-- `Event Type` (filter for "EGV")
-- `Glucose Value (mg/dL)`
-
-### Sibio CSV
-
-Standard export with columns:
-- `Time` (YYYY-MM-DD HH:MM:SS)
-- `Sensor reading(mmol/L)`
-
-## Example Output
-
-```
-======================================================================
-METABOLIC ANALYSIS REPORT
-======================================================================
-
-GLUCOSE METRICS (Dexcom CGM)
-----------------------------------------
-Date Range: 2025-12-16 to 2025-12-29
-Readings: 3,592 (91.0% coverage)
-
-Basic Statistics:
-  Mean Glucose:     97.3 mg/dL
-  Median Glucose:   97.0 mg/dL
-  Std Deviation:    11.3 mg/dL
-  CV:               11.6%
-  GMI (est. A1C):   5.64%
-
-Time in Range:
-  Very Low (<54):   0.0%
-  Low (54-69):      1.1%
-  In Range (70-180): 98.9%
-  High (181-250):   0.0%
-  Very High (>250): 0.0%
-
-Optimization Targets:
-  Tight Range (70-140): 98.7%
-  Optimal (70-110):     88.5%
-...
+ketones:
+  light_ketosis: 0.5    # Nutritional ketosis threshold
+  therapeutic: 1.0      # Therapeutic ketosis threshold
 ```
 
-## Extending the Module
+## Requirements
 
-The module is designed to be extensible. Key extension points:
+- Python 3.9+
+- streamlit
+- pandas
+- numpy
+- scipy
+- matplotlib
+- plotly
+- pyyaml
 
-1. **New data sources**: Add loader functions following the pattern of `load_dexcom_data()` and `load_sibio_data()`
-2. **Additional metrics**: Add calculation functions and extend the dataclasses
-3. **Visualization**: The data structures are designed to work easily with matplotlib/plotly
+## License
 
-## References
-
-- International Consensus on CGM metrics (Battelino et al., 2019)
-- GMI formula (Bergenstal et al., 2018)
-- BGRI calculations (Kovatchev et al.)
+MIT

@@ -150,7 +150,7 @@ def load_config(config_path: Optional[Path] = None) -> AnalysisConfig:
     
     Args:
         config_path: Path to config.yaml. If None, looks for config.yaml
-                    in the metabolic_dashboard package directory.
+                    in the cgm_ckm_analyzer package directory.
     
     Returns:
         AnalysisConfig with values from file merged with defaults.

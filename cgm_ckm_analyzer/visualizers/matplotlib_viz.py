@@ -17,10 +17,10 @@ from pathlib import Path
 from typing import Optional, Tuple, List, Dict, Any, Union
 from io import BytesIO
 
-from metabolic_dashboard.config import AnalysisConfig
-from metabolic_dashboard.utils.smoothing import savgol_smooth, smooth_by_time_of_day
-from metabolic_dashboard.utils.statistics import remove_outliers_iqr_grouped
-from metabolic_dashboard.utils.colors import (
+from cgm_ckm_analyzer.config import AnalysisConfig
+from cgm_ckm_analyzer.utils.smoothing import savgol_smooth, smooth_by_time_of_day
+from cgm_ckm_analyzer.utils.statistics import remove_outliers_iqr_grouped
+from cgm_ckm_analyzer.utils.colors import (
     NIGHT_COLOR, DAYTIME_COLOR, SUNRISE_COLOR, SUNSET_COLOR,
     CGM_LINE_COLOR, CGM_MAX_LINE_COLOR,
     interpolate_colors, get_time_of_day_periods, get_glucose_reference_lines,
