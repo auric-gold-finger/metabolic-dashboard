@@ -60,7 +60,7 @@ class ReportGenerator:
         
         # Core Metrics Section
         lines.append("-" * 60)
-        lines.append("📊 CORE METRICS (Consensus Guidelines)")
+        lines.append("CORE METRICS (Consensus Guidelines)")
         lines.append("-" * 60)
         lines.append("")
         
@@ -73,12 +73,12 @@ class ReportGenerator:
             lines.append(f"    Mean: {glucose_metrics.mean:.1f} mg/dL")
             lines.append(f"    Median: {glucose_metrics.median:.1f} mg/dL")
             lines.append(f"    SD: {glucose_metrics.std:.1f} mg/dL")
-            lines.append(f"    CV: {glucose_metrics.cv:.1f}% {'✓' if glucose_metrics.cv < 36 else '⚠'} (target <36%)")
+            lines.append(f"    CV: {glucose_metrics.cv:.1f}% (target <36%)")
             lines.append("")
             lines.append("  Time in Range (Standard):")
             lines.append(f"    Very Low (<54): {glucose_metrics.time_very_low:.1f}%")
             lines.append(f"    Low (54-69): {glucose_metrics.time_low:.1f}%")
-            lines.append(f"    In Range (70-180): {glucose_metrics.time_in_range:.1f}% {'✓' if glucose_metrics.time_in_range >= 70 else '⚠'} (target >70%)")
+            lines.append(f"    In Range (70-180): {glucose_metrics.time_in_range:.1f}% (target >70%)")
             lines.append(f"    High (181-250): {glucose_metrics.time_high:.1f}%")
             lines.append(f"    Very High (>250): {glucose_metrics.time_very_high:.1f}%")
             lines.append("")
@@ -97,7 +97,7 @@ class ReportGenerator:
         
         # Optimization Section
         lines.append("-" * 60)
-        lines.append("🎯 OPTIMIZATION TARGETS")
+        lines.append("OPTIMIZATION TARGETS")
         lines.append("-" * 60)
         lines.append("")
         
@@ -123,8 +123,8 @@ class ReportGenerator:
         # Experimental Section
         if overlap_data or flexibility_score:
             lines.append("-" * 60)
-            lines.append("🧪 EXPERIMENTAL ANALYSIS")
-            lines.append("   ⚠️ These metrics are exploratory and unvalidated")
+            lines.append("EXPERIMENTAL ANALYSIS")
+            lines.append("   Note: These metrics are exploratory and unvalidated")
             lines.append("-" * 60)
             lines.append("")
             

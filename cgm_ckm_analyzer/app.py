@@ -30,7 +30,7 @@ from cgm_ckm_analyzer.reports import ReportGenerator
 
 st.set_page_config(
     page_title="CGM/CKM Analyzer",
-    page_icon="📊",
+    page_icon=None,
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -71,49 +71,22 @@ st.markdown("""
         font-weight: 500;
     }
     
-    .evidence-badge {
-        display: inline-block;
-        padding: 2px 8px;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        margin-left: 8px;
-    }
-    
-    .badge-consensus {
-        background-color: #dcfce7;
-        color: #166534;
-    }
-    
-    .badge-optimization {
-        background-color: #fef3c7;
-        color: #92400e;
-    }
-    
-    .badge-experimental {
-        background-color: #fee2e2;
-        color: #991b1b;
-    }
-    
     .section-header {
-        padding: 12px 16px;
-        border-radius: 8px;
-        margin-bottom: 16px;
+        padding: 8px 0;
+        margin-bottom: 12px;
+        border-bottom: 1px solid #e5e7eb;
     }
     
-    .section-consensus {
-        background: linear-gradient(90deg, #dcfce7 0%, transparent 100%);
-        border-left: 4px solid #22c55e;
+    .section-header strong {
+        font-size: 1.1rem;
     }
     
-    .section-optimization {
-        background: linear-gradient(90deg, #fef3c7 0%, transparent 100%);
-        border-left: 4px solid #f59e0b;
-    }
-    
-    .section-experimental {
-        background: linear-gradient(90deg, #fee2e2 0%, transparent 100%);
-        border-left: 4px solid #ef4444;
+    .tier-label {
+        font-size: 0.75rem;
+        color: #6b7280;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -147,7 +120,7 @@ init_session_state()
 def render_sidebar():
     """Render sidebar with file uploads and configuration."""
     with st.sidebar:
-        st.title("📊 CGM/CKM Analyzer")
+        st.title("CGM/CKM Analyzer")
         
         # File uploads
         st.subheader("Data Upload")
@@ -209,7 +182,7 @@ def render_sidebar():
         st.divider()
         
         # Configuration controls
-        st.subheader("⚙️ Settings")
+        st.subheader("Settings")
         
         # Smoothing
         smoothing = st.slider("Smoothing Window", 1, 20, 5)
@@ -256,16 +229,16 @@ def render_main():
     config = st.session_state.config
     
     if glucose_df is None and ketone_df is None:
-        st.info("👈 Upload CGM or ketone data files to begin analysis")
+        st.info("Upload CGM or ketone data files in the sidebar to begin analysis.")
         
-        with st.expander("ℹ️ About This Dashboard"):
+        with st.expander("About This Dashboard"):
             st.markdown("""
             This dashboard analyzes continuous glucose monitor (CGM) and ketone monitor data,
             organizing metrics by **evidence tier**:
             
-            - 🟢 **Consensus Guidelines**: Evidence-based metrics from ADA/EASD/International Consensus
-            - 🟡 **Optimization Targets**: Used in metabolic health literature (stricter but less standardized)
-            - 🔴 **Experimental Analysis**: Novel/exploratory analyses (use for pattern recognition only)
+            - **Consensus Guidelines**: Evidence-based metrics from ADA/EASD/International Consensus
+            - **Optimization Targets**: Used in metabolic health literature (stricter but less standardized)
+            - **Experimental Analysis**: Novel/exploratory analyses (use for pattern recognition only)
             
             **Supported Formats:**
             - Dexcom Clarity CSV exports
@@ -291,7 +264,7 @@ def render_main():
     viz = PlotlyVisualizer(config)
     
     # Create tabs
-    tabs = st.tabs(["📊 Overview", "📈 Time Series", "📉 Distribution", "🔬 Advanced"])
+    tabs = st.tabs(["Overview", "Time Series", "Distribution", "Advanced"])
     
     # =========================================================================
     # TAB 1: Overview
@@ -325,10 +298,9 @@ def render_overview(glucose_analyzer, ketone_analyzer, combined_analyzer, viz, s
     # SECTION 1: Core Metrics (Consensus)
     # =========================================================================
     st.markdown("""
-    <div class="section-header section-consensus">
-        <strong>📊 Core Metrics</strong>
-        <span class="evidence-badge badge-consensus">Consensus Guidelines</span>
-        <span style="font-size: 0.85rem; color: #666;">— ADA/EASD/International Consensus</span>
+    <div class="section-header">
+        <strong>Core Metrics</strong>
+        <span class="tier-label">Consensus Guidelines — ADA/EASD</span>
     </div>
     """, unsafe_allow_html=True)
     
@@ -338,11 +310,11 @@ def render_overview(glucose_analyzer, ketone_analyzer, combined_analyzer, viz, s
         col1, col2, col3, col4, col5 = st.columns(5)
         
         with col1:
-            cv_delta = "✓ At target" if metrics.cv < 36 else "Above target"
+            cv_delta = "At target" if metrics.cv < 36 else "Above target"
             st.metric("CV", f"{metrics.cv:.1f}%", cv_delta)
         
         with col2:
-            tir_delta = "✓ At target" if metrics.time_in_range >= 70 else "Below target"
+            tir_delta = "At target" if metrics.time_in_range >= 70 else "Below target"
             st.metric("Time in Range", f"{metrics.time_in_range:.1f}%", tir_delta)
         
         with col3:
@@ -393,10 +365,9 @@ def render_overview(glucose_analyzer, ketone_analyzer, combined_analyzer, viz, s
     # SECTION 2: Optimization Targets
     # =========================================================================
     st.markdown("""
-    <div class="section-header section-optimization">
-        <strong>🎯 Optimization Targets</strong>
-        <span class="evidence-badge badge-optimization">Metabolic Health</span>
-        <span style="font-size: 0.85rem; color: #666;">— Stricter targets from metabolic health literature</span>
+    <div class="section-header">
+        <strong>Optimization Targets</strong>
+        <span class="tier-label">Metabolic Health Literature</span>
     </div>
     """, unsafe_allow_html=True)
     
@@ -440,18 +411,17 @@ def render_overview(glucose_analyzer, ketone_analyzer, combined_analyzer, viz, s
     # SECTION 3: Experimental Analysis
     # =========================================================================
     st.markdown("""
-    <div class="section-header section-experimental">
-        <strong>🧪 Experimental Analysis</strong>
-        <span class="evidence-badge badge-experimental">Exploratory</span>
-        <span style="font-size: 0.85rem; color: #666;">— Novel metrics, use for pattern recognition only</span>
+    <div class="section-header">
+        <strong>Experimental Analysis</strong>
+        <span class="tier-label">Novel Metrics — Not Clinically Validated</span>
     </div>
     """, unsafe_allow_html=True)
     
-    st.warning("⚠️ These analyses use arbitrary thresholds and are NOT clinically validated.")
+    st.caption("These analyses use arbitrary thresholds and are not clinically validated. Use for pattern recognition only.")
     
     if combined_analyzer:
         # Metabolic Flexibility Score
-        with st.expander("📊 Metabolic Flexibility Score — How it works"):
+        with st.expander("Metabolic Flexibility Score"):
             st.markdown("""
             This is a **custom composite score** (0-100) that attempts to quantify "metabolic flexibility":
             
@@ -461,7 +431,7 @@ def render_overview(glucose_analyzer, ketone_analyzer, combined_analyzer, viz, s
             | **Ketone Production** | 30 | Time in ketosis × 0.5 | Ability to produce ketones |
             | **Flexibility** | 30 | -correlation × 30 | When glucose ↓, ketones ↑ |
             
-            ⚠️ **This scoring formula is NOVEL and UNVALIDATED.** The weightings are arbitrary.
+            **Note:** This scoring formula is novel and unvalidated. The weightings are arbitrary.
             Use for personal pattern tracking only.
             """)
             
@@ -480,7 +450,7 @@ def render_overview(glucose_analyzer, ketone_analyzer, combined_analyzer, viz, s
         # Overlap Analysis
         overlap = combined_analyzer.analyze_overlap()
         if overlap.get('overlap_readings', 0) > 0:
-            with st.expander("🔗 Overlap Analysis"):
+            with st.expander("Overlap Analysis"):
                 col1, col2 = st.columns(2)
                 with col1:
                     st.metric("Matched Readings", overlap['overlap_readings'])
@@ -496,7 +466,7 @@ def render_overview(glucose_analyzer, ketone_analyzer, combined_analyzer, viz, s
 
 def render_time_series(glucose_df, ketone_df, viz, smoothing):
     """Render time series tab."""
-    st.subheader("📈 Time Series Visualization")
+    st.subheader("Time Series")
     
     # Always show Plotly interactive charts first
     plotly_viz = PlotlyVisualizer(st.session_state.config)
@@ -529,7 +499,7 @@ def render_time_series(glucose_df, ketone_df, viz, smoothing):
     
     # Always show Matplotlib publication-quality chart below
     st.divider()
-    st.markdown("### 📊 Publication Quality Daily Overlay")
+    st.markdown("### Publication Quality Daily Overlay")
     st.caption("Savitzky-Golay smoothed curves with time-of-day gradient background")
     
     if glucose_df is not None:
@@ -542,7 +512,7 @@ def render_time_series(glucose_df, ketone_df, viz, smoothing):
         mpl_fig.savefig(buf, format='png', dpi=300, bbox_inches='tight')
         buf.seek(0)
         st.download_button(
-            "📥 Download High-Res PNG",
+            "Download High-Res PNG",
             buf,
             file_name="cgm_daily_overlay.png",
             mime="image/png"
@@ -552,7 +522,7 @@ def render_time_series(glucose_df, ketone_df, viz, smoothing):
 
 def render_distribution(glucose_analyzer, ketone_analyzer, viz):
     """Render distribution tab."""
-    st.subheader("📉 Distribution Analysis")
+    st.subheader("Distribution Analysis")
     
     if isinstance(viz, PlotlyVisualizer):
         col1, col2 = st.columns(2)
@@ -605,7 +575,7 @@ def render_distribution(glucose_analyzer, ketone_analyzer, viz):
 
 def render_advanced(glucose_analyzer, ketone_analyzer, combined_analyzer, viz):
     """Render advanced analysis tab."""
-    st.subheader("🔬 Advanced Analysis")
+    st.subheader("Advanced Analysis")
     
     if combined_analyzer:
         # Lag Correlation
@@ -650,7 +620,7 @@ def render_advanced(glucose_analyzer, ketone_analyzer, combined_analyzer, viz):
     
     # Download Report
     st.divider()
-    st.markdown("**📄 Export Report**")
+    st.markdown("**Export Report**")
     
     if glucose_analyzer or ketone_analyzer:
         generator = ReportGenerator()

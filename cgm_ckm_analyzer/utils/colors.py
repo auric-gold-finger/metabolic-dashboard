@@ -186,9 +186,9 @@ EVIDENCE_TIER_COLORS = {
 }
 
 EVIDENCE_TIER_LABELS = {
-    'consensus': '🟢 Consensus',
-    'optimization': '🟡 Optimization',
-    'experimental': '🔴 Experimental',
+    'consensus': 'Consensus',
+    'optimization': 'Optimization',
+    'experimental': 'Experimental',
 }
 
 
