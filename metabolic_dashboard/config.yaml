@@ -1,0 +1,115 @@
+# Metabolic Dashboard Configuration
+# ==================================
+# Modify thresholds to match your clinical or personal targets.
+# All values have sensible defaults; only override what you need.
+
+# GLUCOSE THRESHOLDS (mg/dL)
+# ==========================
+glucose:
+  # --- Consensus Guidelines (ADA/EASD/International Consensus) ---
+  # These are standard clinical thresholds with strong evidence.
+  
+  very_low: 54        # Level 2 hypoglycemia - clinically significant
+  low: 70             # Level 1 hypoglycemia
+  target_low: 70      # Standard Time in Range lower bound
+  target_high: 180    # Standard Time in Range upper bound (Battelino 2019)
+  high: 180           # Elevated glucose threshold
+  very_high: 250      # Clinically significant hyperglycemia
+  
+  # --- Optimization Targets (Non-standard) ---
+  # Used in metabolic health/longevity literature (Attia, Means).
+  # Stricter than clinical diabetes targets.
+  
+  tight_low: 70       # Tight range lower bound (same as target_low)
+  tight_high: 140     # Tighter control upper bound
+  optimal_low: 70     # Optimal/longevity target lower bound
+  optimal_high: 110   # Optimal/longevity target upper bound
+
+
+# KETONE THRESHOLDS (mmol/L)
+# ==========================
+# Note: These are from ketogenic diet literature (Volek/Phinney),
+# not clinically standardized. Thresholds vary by source.
+ketones:
+  absent: 0.2              # Effectively no ketones
+  trace: 0.5               # Trace ketones, transitional state
+  light_ketosis: 0.5       # Lower bound of nutritional ketosis
+  moderate_ketosis: 1.0    # Moderate nutritional ketosis
+  deep_ketosis: 3.0        # Deep ketosis (caution: DKA concern for T1D)
+  therapeutic: 1.0         # Therapeutic ketosis lower bound
+
+
+# ANALYSIS SETTINGS
+# =================
+analysis:
+  # CV target - International Consensus (Battelino 2019)
+  cv_target: 36.0          # Target: <36% for glycemic stability
+  cv_excellent: 33.0       # Excellent: <33%
+  
+  # Data quality
+  readings_per_hour: 12    # Assumes 5-minute CGM intervals
+  min_data_coverage: 70.0  # Minimum % coverage for reliable analysis
+  
+  # Timestamp alignment
+  merge_tolerance_minutes: 5  # Max gap when aligning glucose/ketone data
+  
+  # MAGE calculation
+  mage_threshold_sd: 1.0   # Excursions must exceed this many SDs
+  
+  # Overnight analysis windows
+  night_start_hour: 0      # Midnight
+  night_end_hour: 6        # 6 AM
+  dawn_early_start: 3      # Dawn phenomenon early window start
+  dawn_early_end: 4        # Dawn phenomenon early window end
+  dawn_late_start: 5       # Dawn phenomenon late window start
+  dawn_late_end: 6         # Dawn phenomenon late window end
+
+
+# EXPERIMENTAL SETTINGS
+# =====================
+# WARNING: These are exploratory analyses with arbitrary thresholds.
+# They are NOT clinically validated. Use for pattern recognition only.
+experimental:
+  # Fasting window detection
+  fasting_glucose_threshold: 95.0    # mg/dL - glucose must be below this
+  fasting_ketone_threshold: 0.5      # mmol/L - ketones must be above this
+  fasting_min_duration_hours: 4.0    # Minimum duration to count as fasting
+  
+  # Spike detection
+  spike_threshold_rise: 30.0         # mg/dL - minimum rise to detect spike
+  spike_roc_threshold: 15.0          # mg/dL/hr - rate of change threshold
+  
+  # Lag correlation analysis
+  max_lag_hours: 12                  # Maximum lag to analyze
+  lag_interval_minutes: 30           # Interval between lag calculations
+  
+  # Metabolic Flexibility Score weights
+  # These are ARBITRARY and NOT VALIDATED. The score is experimental.
+  flexibility_glucose_weight: 40.0   # Max points for glucose stability
+  flexibility_ketone_weight: 30.0    # Max points for ketone production
+  flexibility_correlation_weight: 30.0  # Max points for inverse correlation
+
+
+# VISUALIZATION SETTINGS
+# ======================
+visualization:
+  # Smoothing parameters
+  rolling_window: 5        # Window for rolling average smoothing
+  savgol_window: 111       # Savitzky-Golay window (must be odd)
+  savgol_polyorder: 2      # Polynomial order for Savitzky-Golay
+  
+  # Typography
+  font_family: "Avenir"
+  fallback_font: "Inter, sans-serif"
+  
+  # Quantile bands for CGM plot visualization
+  # Default: 10th, 34th (mean-1SD), 50th, 68th (mean+1SD), 90th percentiles
+  quantiles:
+    - 0.10
+    - 0.34
+    - 0.50
+    - 0.68
+    - 0.90
+  
+  # Outlier removal
+  iqr_factor: 1.5          # Multiplier for IQR-based outlier detection
